@@ -4,6 +4,7 @@ import moderngl as mgl
 import pygame as pg
 
 from settings import *
+from shader_program import ShaderProgram
 
 
 class VoxelEngine:
@@ -12,7 +13,8 @@ class VoxelEngine:
         # set some opengl attributes such as opengl version
         pg.display.gl_set_attribute(pg.GL_CONTEXT_MAJOR_VERSION, 3) 
         pg.display.gl_set_attribute(pg.GL_CONTEXT_MINOR_VERSION, 3)
-        pg.display.gl_set_attribute(pg.GL_CONTEXT_PROFILE_MASK, pg.GL_CONTEXT_PROFILE_CORE)
+        pg.display.gl_set_attribute(pg.GL_CONTEXT_PROFILE_MASK,
+                                    pg.GL_CONTEXT_PROFILE_CORE)
         pg.display.gl_set_attribute(pg.GL_DEPTH_SIZE, 24)
 
         # set window resolution and create opengl context
@@ -27,9 +29,15 @@ class VoxelEngine:
         self.time = 0
 
         self.is_running = True
+        self.on_init()
+
+    def on_init(self):
+        self.shader_program = ShaderProgram(self)
 
     # update state of objects
     def update(self):
+        self.shader_program.update()
+
         self.delta_time = self.clock.tick()
         self.time = pg.time.get_ticks() * 0.001
         # show fps on screen
@@ -42,7 +50,8 @@ class VoxelEngine:
     def handle_events(self):
         for event in pg.event.get():
             # handle program exit
-            if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event == pg.K_ESCAPE):
+            if event.type == pg.QUIT or (event.type == pg.KEYDOWN and
+                                         event == pg.K_ESCAPE):
                 self.is_running = False
 
     def run(self):
