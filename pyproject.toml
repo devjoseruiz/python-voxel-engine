@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "python-voxel-engine"
+version = "0.1.0"
+description = "Voxel 3D Engine like Minecraft using Python, Pygame and OpenGL."
+authors = ["Your Name <you@example.com>"]
+license = "BSD-3-Clause"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+numba = "^0.58.0"
+pyglm = "^2.7.0"
+moderngl = "^5.8.2"
+pygame = "^2.5.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
