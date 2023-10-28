@@ -7,6 +7,7 @@ from player import Player
 from scene import Scene
 from settings import *
 from shader_program import ShaderProgram
+from textures import Textures
 
 
 class VoxelEngine:
@@ -37,6 +38,7 @@ class VoxelEngine:
         self.on_init()
 
     def on_init(self):
+        self.textures = Textures(self)
         self.player = Player(self)
         self.shader_program = ShaderProgram(self)
         self.scene = Scene(self)
@@ -59,9 +61,7 @@ class VoxelEngine:
 
     def handle_events(self):
         for event in pg.event.get():
-            # handle program exit
-            if event.type == pg.QUIT or (event.type == pg.KEYDOWN and
-                                         event == pg.K_ESCAPE):
+            if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
                 self.is_running = False
 
     def run(self):
