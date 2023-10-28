@@ -3,6 +3,7 @@ import sys
 import moderngl as mgl
 import pygame as pg
 
+from player import Player
 from scene import Scene
 from settings import *
 from shader_program import ShaderProgram
@@ -29,15 +30,20 @@ class VoxelEngine:
         self.delta_time = 0
         self.time = 0
 
+        pg.event.set_grab(True)
+        pg.mouse.set_visible(False)
+
         self.is_running = True
         self.on_init()
 
     def on_init(self):
+        self.player = Player(self)
         self.shader_program = ShaderProgram(self)
         self.scene = Scene(self)
 
     # update state of objects
     def update(self):
+        self.player.update()
         self.shader_program.update()
         self.scene.update()
 
