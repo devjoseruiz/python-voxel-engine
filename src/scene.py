@@ -1,14 +1,14 @@
 from settings import *
-from world_objects.chunk import Chunk
+from world import World
 
 
 class Scene:
     def __init__(self, app):
         self.app = app
-        self.chunk = Chunk(self.app)
+        self.world = World(self.app)
     
     def update(self):
-        pass
+        self.world.update()
 
     def render(self):
-        self.chunk.render()
+        self.world.render()
