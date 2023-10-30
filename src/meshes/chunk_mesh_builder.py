@@ -1,6 +1,13 @@
+from numba import uint8
+
 from settings import *
 
 
+@njit
+def to_uint8(x, y, z, voxel_id, face_id):
+    return uint8(x), uint8(y), uint8(z), uint8(voxel_id), uint8(face_id)
+
+@njit
 def get_chunk_index(world_voxel_pos):
     wx, wy, wz = world_voxel_pos
     cx = wx // CHUNK_SIZE
@@ -12,6 +19,7 @@ def get_chunk_index(world_voxel_pos):
     index = cx + WORLD_W * cz + WORLD_AREA * cy
     return index
 
+@njit
 def is_void(local_voxel_pos, world_voxel_pos, world_voxels):
     chunk_index = get_chunk_index(world_voxel_pos)
     if chunk_index == -1:
@@ -25,6 +33,7 @@ def is_void(local_voxel_pos, world_voxel_pos, world_voxels):
         return False
     return True
 
+@njit
 def add_data(vertex_data, index, *vertices):
     for vertex in vertices:
         for attr in vertex:
@@ -32,6 +41,7 @@ def add_data(vertex_data, index, *vertices):
             index += 1
     return index
 
+@njit
 def build_chunk_mesh(chunk_voxels, format_size, chunk_pos, world_voxels):
     vertex_data = np.empty(CHUNK_VOL * 18 * format_size, dtype='uint8')
     index = 0
@@ -52,55 +62,55 @@ def build_chunk_mesh(chunk_voxels, format_size, chunk_pos, world_voxels):
                 # top face
                 if is_void((x, y + 1, z), (wx, wy + 1, wz), world_voxels):
                     # format: x, y, z, voxel_id, face_id
-                    v0 = (x    , y + 1, z    , voxel_id, 0)
-                    v1 = (x + 1, y + 1, z    , voxel_id, 0)
-                    v2 = (x + 1, y + 1, z + 1, voxel_id, 0)
-                    v3 = (x    , y + 1, z + 1, voxel_id, 0)
+                    v0 = to_uint8(x    , y + 1, z    , voxel_id, 0)
+                    v1 = to_uint8(x + 1, y + 1, z    , voxel_id, 0)
+                    v2 = to_uint8(x + 1, y + 1, z + 1, voxel_id, 0)
+                    v3 = to_uint8(x    , y + 1, z + 1, voxel_id, 0)
 
                     index = add_data(vertex_data, index, v0, v3, v2, v0, v2, v1)
 
                 # bottom face
                 if is_void((x, y - 1, z), (wx, wy - 1, wz), world_voxels):
-                    v0 = (x    , y, z    , voxel_id, 1)
-                    v1 = (x + 1, y, z    , voxel_id, 1)
-                    v2 = (x + 1, y, z + 1, voxel_id, 1)
-                    v3 = (x    , y, z + 1, voxel_id, 1)
+                    v0 = to_uint8(x    , y, z    , voxel_id, 1)
+                    v1 = to_uint8(x + 1, y, z    , voxel_id, 1)
+                    v2 = to_uint8(x + 1, y, z + 1, voxel_id, 1)
+                    v3 = to_uint8(x    , y, z + 1, voxel_id, 1)
 
                     index = add_data(vertex_data, index, v0, v2, v3, v0, v1, v2)
 
                 # right face
                 if is_void((x + 1, y, z), (wx + 1, wy, wz), world_voxels):
-                    v0 = (x + 1, y    , z    , voxel_id, 2)
-                    v1 = (x + 1, y + 1, z    , voxel_id, 2)
-                    v2 = (x + 1, y + 1, z + 1, voxel_id, 2)
-                    v3 = (x + 1, y    , z + 1, voxel_id, 2)
+                    v0 = to_uint8(x + 1, y    , z    , voxel_id, 2)
+                    v1 = to_uint8(x + 1, y + 1, z    , voxel_id, 2)
+                    v2 = to_uint8(x + 1, y + 1, z + 1, voxel_id, 2)
+                    v3 = to_uint8(x + 1, y    , z + 1, voxel_id, 2)
 
                     index = add_data(vertex_data, index, v0, v1, v2, v0, v2, v3)
 
                 # left face
                 if is_void((x - 1, y, z), (wx - 1, wy, wz), world_voxels):
-                    v0 = (x, y    , z    , voxel_id, 3)
-                    v1 = (x, y + 1, z    , voxel_id, 3)
-                    v2 = (x, y + 1, z + 1, voxel_id, 3)
-                    v3 = (x, y    , z + 1, voxel_id, 3)
+                    v0 = to_uint8(x, y    , z    , voxel_id, 3)
+                    v1 = to_uint8(x, y + 1, z    , voxel_id, 3)
+                    v2 = to_uint8(x, y + 1, z + 1, voxel_id, 3)
+                    v3 = to_uint8(x, y    , z + 1, voxel_id, 3)
 
                     index = add_data(vertex_data, index, v0, v2, v1, v0, v3, v2)
 
                 # back face
                 if is_void((x, y, z - 1), (wx, wy, wz - 1), world_voxels):
-                    v0 = (x,     y,     z, voxel_id, 4)
-                    v1 = (x,     y + 1, z, voxel_id, 4)
-                    v2 = (x + 1, y + 1, z, voxel_id, 4)
-                    v3 = (x + 1, y,     z, voxel_id, 4)
+                    v0 = to_uint8(x,     y,     z, voxel_id, 4)
+                    v1 = to_uint8(x,     y + 1, z, voxel_id, 4)
+                    v2 = to_uint8(x + 1, y + 1, z, voxel_id, 4)
+                    v3 = to_uint8(x + 1, y,     z, voxel_id, 4)
 
                     index = add_data(vertex_data, index, v0, v1, v2, v0, v2, v3)
 
                 # front face
                 if is_void((x, y, z + 1), (wx, wy, wz + 1), world_voxels):
-                    v0 = (x    , y    , z + 1, voxel_id, 5)
-                    v1 = (x    , y + 1, z + 1, voxel_id, 5)
-                    v2 = (x + 1, y + 1, z + 1, voxel_id, 5)
-                    v3 = (x + 1, y    , z + 1, voxel_id, 5)
+                    v0 = to_uint8(x    , y    , z + 1, voxel_id, 5)
+                    v1 = to_uint8(x    , y + 1, z + 1, voxel_id, 5)
+                    v2 = to_uint8(x + 1, y + 1, z + 1, voxel_id, 5)
+                    v3 = to_uint8(x + 1, y    , z + 1, voxel_id, 5)
 
                     index = add_data(vertex_data, index, v0, v2, v1, v0, v3, v2)
 
