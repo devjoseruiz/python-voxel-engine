@@ -12,6 +12,7 @@ numba = "^0.58.0"
 pyglm = "^2.7.0"
 moderngl = "^5.8.2"
 pygame = "^2.5.2"
+opensimplex = "^0.4.5"
 
 
 [build-system]

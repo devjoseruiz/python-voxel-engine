@@ -255,6 +255,20 @@ files = [
 ]
 
 [[package]]
+name = "opensimplex"
+version = "0.4.5"
+description = "OpenSimplex is a noise generation function like Perlin or Simplex noise, but better."
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "opensimplex-0.4.5-py3-none-any.whl", hash = "sha256:5e34f2b6f7e2d3e798d7f060b45cb1f92c02b68b6fc2626ac2a36bd53ec6c773"},
+    {file = "opensimplex-0.4.5.tar.gz", hash = "sha256:c390cf70dea97b32bd1a49ba6781e84f48dc93b1cc6c06f36d9d44c548299f90"},
+]
+
+[package.dependencies]
+numpy = ">=1.22"
+
+[[package]]
 name = "pygame"
 version = "2.5.2"
 description = "Python Game Development"
@@ -422,4 +436,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "87a00356eafbb84e1b246e4cf53f9c1ee28143c4ccc30090df50d9c2122cc4eb"
+content-hash = "42accb5576f7481952ad0265ae40d1cec46106e2806e82ff8a5aeeda1e38e760"
