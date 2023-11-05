@@ -45,8 +45,7 @@ class Chunk:
                 local_height = min(world_height - cy, CHUNK_SIZE)
 
                 for y in range(local_height):
-                    wy = y + cy
-                    voxels[x + CHUNK_SIZE * z + CHUNK_AREA * y] = wy + 1
+                    voxels[x + CHUNK_SIZE * z + CHUNK_AREA * y] = 2
         if np.any(voxels):
             self.is_empty = False
         return voxels
