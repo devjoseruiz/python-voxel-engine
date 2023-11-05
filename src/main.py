@@ -47,7 +47,6 @@ class VoxelEngine:
     def update(self):
         self.player.update()
         self.shader_program.update()
-        self.scene.update()
 
         self.delta_time = self.clock.tick()
         self.time = pg.time.get_ticks() * 0.001

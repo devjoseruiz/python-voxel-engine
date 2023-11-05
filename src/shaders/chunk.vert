@@ -13,9 +13,10 @@ uniform mat4 m_model;
 flat out int voxel_id;
 flat out int face_id;
 
-out vec3 voxel_color;
+//out vec3 voxel_color;
 out vec2 uv;
 out float shading;
+out vec3 frag_world_pos;
 
 const float ao_values[4] = float[4](0.1, 0.25, 0.5, 1.0);
 
@@ -37,13 +38,11 @@ const int uv_indices[24] = int[24](
     1, 2, 3, 1, 0, 2   // odd flipped face
 );
 
-
 vec3 hash31(float p) {
     vec3 p3 = fract(vec3(p * 21.2) * vec3(0.1031, 0.1030, 0.0973));
     p3 += dot(p3, p3.yzx + 33.33);
     return fract((p3.xxy + p3.yzz) * p3.zyx) + 0.05;
 }
-
 
 void unpack(uint packed_data) {
     // a, b, c, d, e, f, g = x, y, z, voxel_id, face_id, ao_id, flip_id
@@ -66,7 +65,6 @@ void unpack(uint packed_data) {
     flip_id = int(packed_data & g_mask);
 }
 
-
 void main() {
     unpack(packed_data);
 
@@ -74,8 +72,10 @@ void main() {
     int uv_index = gl_VertexID % 6  + ((face_id & 1) + flip_id * 2) * 6;
 
     uv = uv_coords[uv_indices[uv_index]];
-    voxel_color = hash31(voxel_id);
+
     shading = face_shading[face_id] * ao_values[ao_id];
 
-    gl_Position = m_proj * m_view * m_model * vec4(in_position, 1.0);
+    frag_world_pos = (m_model * vec4(in_position, 1.0)).xyz;
+
+    gl_Position = m_proj * m_view * vec4(frag_world_pos, 1.0);
 }
